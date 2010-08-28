@@ -18,6 +18,7 @@ module Hydra #:nodoc:
     def initialize(opts = {})
       @io = opts.fetch(:io) { raise "No IO Object" } 
       @verbose = opts.fetch(:verbose) { false }      
+      @remote = opts.fetch(:remote) { false }      
       $stdout.sync = true
       trace 'Booted. Sending Request for file'
 
