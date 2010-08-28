@@ -13,6 +13,7 @@ module Hydra #:nodoc:
           raise IOError unless @reader
           message = @reader.gets
           return nil unless message
+          puts message if message.include?(Hydra::Trace::REMOTE_IDENTIFIER)
           return Message.build(eval(message.chomp))
         rescue SyntaxError, NameError
           # uncomment to help catch remote errors by seeing all traffic
