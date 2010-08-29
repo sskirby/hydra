@@ -17,9 +17,17 @@ module Hydra #:nodoc:
     module InstanceMethods
       # Trace some output with the class's prefix and a newline.
       # Checks to ensure we're running verbosely.
-      def trace(str)
+      def trace(str, force = false)
         remote_info = @remote ? "#{REMOTE_IDENTIFIER} #{@remote} " : ''
-        $stdout.write "#{Time.now.to_f} #{remote_info}#{self.class._traceable_prefix}| #{str}\n" if @verbose
+        $stdout.write "#{Time.now.to_f} #{remote_info}#{self.class._traceable_prefix}| #{str}\n" if @verbose || force
+      end
+
+      def trace_ex(ex)
+        trace format_exception(ex), true
+      end
+
+      def format_exception(ex)
+        "#{ex.class.name}: #{ex.message}\n    #{ex.backtrace.join("\n    ")}"
       end
     end
   end

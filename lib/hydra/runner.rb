@@ -26,7 +26,8 @@ module Hydra #:nodoc:
       begin
         process_messages
       rescue => ex
-        trace ex.to_s
+        #trace ex.to_s
+        trace_ex ex
         raise ex
       end
     end
