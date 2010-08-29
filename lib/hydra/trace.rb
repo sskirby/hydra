@@ -18,8 +18,10 @@ module Hydra #:nodoc:
       # Trace some output with the class's prefix and a newline.
       # Checks to ensure we're running verbosely.
       def trace(str)
+        return unless @verbose
         remote_info = @remote ? "#{REMOTE_IDENTIFIER} #{@remote} " : ''
-        $stdout.write "#{Time.now.to_f} #{remote_info}#{self.class._traceable_prefix}| #{str}\n" if @verbose
+        str = str.gsub /\n/, "\n#{remote_info}"
+        $stdout.write "#{Time.now.to_f} #{remote_info}#{self.class._traceable_prefix}| #{str}\n"
       end
     end
   end
