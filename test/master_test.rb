@@ -177,5 +177,23 @@ class MasterTest < Test::Unit::TestCase
       # ensure b is deleted
       assert !File.exists?(File.join(remote, 'test_b.rb')), "B was not deleted"
     end
+
+    # Not quite sure this works
+    should "shutdown all workers on abnormal termination" do
+      pid = Process.fork do
+        Hydra::Master.new(
+          :files => [File.join(File.dirname(__FILE__), 'fixtures', 'non_terminating.rb')],
+          :workers => [
+            { :type => :local, :runners => 1 }
+          ]
+        )
+      end
+
+      sleep 1
+      Process.kill "SIGTERM", pid
+      Process.wait pid
+
+      assert $?.success?
+    end
   end
 end

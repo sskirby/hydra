@@ -68,6 +68,9 @@ module Hydra #:nodoc:
       @autosort = opts.fetch('autosort') { true }
       @sync = opts.fetch('sync') { nil }
       @environment = opts.fetch('environment') { 'test' }
+      @signals = opts.fetch('signals') {
+        ['SIGTERM', 'SIGINT']
+      }
 
       if @autosort
         sort_files_from_report
@@ -151,6 +154,11 @@ module Hydra #:nodoc:
         else
           raise "Worker type not recognized: (#{type.to_s})"
         end
+      end
+
+      Signal.trap "SIGTERM" do
+        shutdown_all_workers
+        exit
       end
     end
 
@@ -238,6 +246,16 @@ module Hydra #:nodoc:
 
     def heuristic_file
       @heuristic_file ||= File.join(Dir.consistent_tmpdir, 'hydra_heuristics.yml')
+    end
+
+    def trap_signals
+      @signals.each do |signal|
+        Signal.trap signal do
+          trace "Caught signal #{signal}, shutting down."
+          shutdown_all_workers
+          exit 
+        end
+      end
     end
   end
 end
